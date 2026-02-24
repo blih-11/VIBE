@@ -19,6 +19,9 @@ import FindStore from './pages/FindStore';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import Auth from './pages/Auth';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminGuard from './components/admin/AdminGuard';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -26,13 +29,20 @@ function ScrollToTop() {
   return null;
 }
 
+// Pages that should NOT show the store Navbar/Footer
+const ADMIN_PATHS = ['/admin', '/admin-login'];
+
 function AppContent() {
+  const { pathname } = useLocation();
+  const isAdminPage = ADMIN_PATHS.some(p => pathname.startsWith(p));
+
   return (
     <div className="flex flex-col min-h-screen">
       <ScrollToTop />
-      <Navbar />
+      {!isAdminPage && <Navbar />}
       <main className="flex-1">
         <Routes>
+          {/* ── Store ─────────────────────────────────────────── */}
           <Route path="/"              element={<Home />} />
           <Route path="/products"      element={<Products />} />
           <Route path="/products/:id"  element={<ProductDetail />} />
@@ -43,12 +53,15 @@ function AppContent() {
           <Route path="/about"         element={<About />} />
           <Route path="/contact"       element={<Contact />} />
           <Route path="/find-store"    element={<FindStore />} />
+          {/* ── Admin ─────────────────────────────────────────── */}
+          <Route path="/admin-login"   element={<AdminLogin />} />
+          <Route path="/admin"         element={<AdminGuard><AdminDashboard /></AdminGuard>} />
         </Routes>
       </main>
-      <Footer />
-      <CartDrawer />
-      <SearchModal />
-      <ConfirmModal />
+      {!isAdminPage && <Footer />}
+      {!isAdminPage && <CartDrawer />}
+      {!isAdminPage && <SearchModal />}
+      {!isAdminPage && <ConfirmModal />}
     </div>
   );
 }

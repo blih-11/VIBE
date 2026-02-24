@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import HeroSlider from '../components/HeroSlider';
 import ProductCard from '../components/ProductCard';
-import { products, heroSlides, storeLocations } from '../data/products';
+import { heroSlides, storeLocations } from '../data/products';
+import { fetchProducts } from '../lib/api';
 
 function SectionHeader({ eyebrow, title, subtitle, cta, ctaAction }) {
   return (
@@ -34,10 +36,31 @@ const categoryItems = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const saleItems = products.filter(p => p.isSale).slice(0, 4);
-  const newArrivals = products.filter(p => p.isNew).slice(0, 4);
-  const featured = products.filter(p => !p.isSale && !p.isNew).slice(0, 4);
+  useEffect(() => {
+    fetchProducts()
+      .then(data => { if (data.success) setProducts(data.products); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const saleItems    = products.filter(p => p.isSale).slice(0, 4);
+  const newArrivals  = products.filter(p => p.isNew).slice(0, 4);
+  const featured     = products.filter(p => !p.isSale && !p.isNew).slice(0, 4);
+
+  const ProductGrid = ({ items }) => loading ? (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="aspect-[3/4] rounded-xl bg-white/5 animate-pulse" />
+      ))}
+    </div>
+  ) : (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+      {items.map(p => <ProductCard key={p._id} product={p} />)}
+    </div>
+  );
 
   return (
     <div className="bg-brand-bg min-h-screen">
@@ -55,12 +78,12 @@ export default function Home() {
       </div>
 
       {/* Sales Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-        <SectionHeader eyebrow="Limited Time" title="Sales & Offers" subtitle="Save on selected pieces. Grab them before they're gone." cta="View All Sales" ctaAction={() => navigate('/products?filter=sale')} />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-          {saleItems.map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
-      </section>
+      {(loading || saleItems.length > 0) && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+          <SectionHeader eyebrow="Limited Time" title="Sales & Offers" subtitle="Save on selected pieces. Grab them before they're gone." cta="View All Sales" ctaAction={() => navigate('/products?filter=sale')} />
+          <ProductGrid items={saleItems} />
+        </section>
+      )}
 
       {/* Categories */}
       <section className="bg-white/2 border-y border-white/5 py-16">
@@ -88,9 +111,7 @@ export default function Home() {
       {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <SectionHeader eyebrow="Just Dropped" title="New Arrivals" subtitle="Fresh styles from Season 4 — first to wear, first to wave." cta="See More" ctaAction={() => navigate('/products?filter=new-arrivals')} />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-          {newArrivals.map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
+        <ProductGrid items={newArrivals} />
       </section>
 
       {/* Feature Banner */}
@@ -115,9 +136,7 @@ export default function Home() {
       <section className="bg-white/2 border-y border-white/5 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <SectionHeader eyebrow="Editor's Pick" title="Featured Pieces" subtitle="Handpicked for this season's must-haves." cta="Browse All" ctaAction={() => navigate('/products')} />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-            {featured.map(p => <ProductCard key={p.id} product={p} />)}
-          </div>
+          <ProductGrid items={featured} />
         </div>
       </section>
 

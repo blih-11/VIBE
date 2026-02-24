@@ -11,7 +11,7 @@ export function CartProvider({ children }) {
 
   const addToCart = useCallback((product, size, color, quantity = 1) => {
     setCartItems(prev => {
-      const key = `${product.id}-${size}-${color}`;
+      const key = `${product._id || product.id}-${size}-${color}`;
       const existing = prev.find(i => i.key === key);
       if (existing) {
         return prev.map(i => i.key === key ? { ...i, quantity: i.quantity + quantity } : i);

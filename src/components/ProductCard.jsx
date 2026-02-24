@@ -26,7 +26,7 @@ export default function ProductCard({ product }) {
   return (
     <div
       className="group relative bg-brand-surface rounded-xl overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl hover:shadow-black/20 border border-white/5"
-      onClick={() => navigate(`/products/${product.id}`)}
+      onClick={() => navigate(`/products/${product._id || product.id}`)}
     >
       {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden bg-white/5">

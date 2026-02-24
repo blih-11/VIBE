@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { products } from '../data/products';
+import { fetchProducts } from '../lib/api';
 import StarRating from '../components/StarRating';
 import ProductCard from '../components/ProductCard';
 
@@ -10,13 +10,50 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { requestAddToCart, setCartOpen } = useCart();
-  const { formatPrice, convert } = useCurrency();
-  const product = products.find(p => p.id === parseInt(id));
+  const { formatPrice } = useCurrency();
+
+  const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedImg, setSelectedImg] = useState(0);
   const [sizeError, setSizeError] = useState(false);
   const [colorError, setColorError] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    setSelectedSize(null);
+    setSelectedColor(null);
+    setSelectedImg(0);
+
+    fetch(`http://localhost:4000/api/products/${id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          setProduct(data.product);
+          // Fetch related products
+          return fetch('http://localhost:4000/api/products')
+            .then(r => r.json())
+            .then(all => {
+              if (all.success) {
+                const rel = all.products
+                  .filter(p => p._id !== data.product._id && p.category?.some(c => data.product.category?.includes(c)))
+                  .slice(0, 4);
+                setRelated(rel);
+              }
+            });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return (
+    <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
+    </div>
+  );
 
   if (!product) return (
     <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center gap-4 text-center px-4">
@@ -25,7 +62,6 @@ export default function ProductDetail() {
     </div>
   );
 
-  const related = products.filter(p => p.id !== product.id && p.category.some(c => product.category.includes(c))).slice(0, 4);
   const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : null;
   const images = product.images?.length > 0 ? product.images : [product.image];
 
@@ -37,9 +73,9 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="bg-brand-bg min-h-screen   ">
+    <div className="bg-brand-bg min-h-screen">
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6  pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
         <nav className="flex mt-12 items-center gap-2 text-brand-muted text-xs">
           <button onClick={() => navigate('/')} className="hover:text-brand-cream transition-colors">Home</button>
           <span>/</span>
@@ -94,7 +130,7 @@ export default function ProductDetail() {
                 {colorError && <span className="text-red-400 text-xs">Please select a color</span>}
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.colors.map(color => (
+                {product.colors?.map(color => (
                   <button key={color} onClick={() => { setSelectedColor(color); setColorError(false); }}
                     className={`px-4 py-2 rounded-lg border text-sm transition-all duration-200 ${selectedColor === color ? 'border-white bg-white/10 text-white' : 'border-white/15 text-brand-muted hover:border-white/35 hover:text-brand-cream'}`}>
                     {color}
@@ -110,7 +146,7 @@ export default function ProductDetail() {
                 {sizeError && <span className="text-red-400 text-xs">Please select a size</span>}
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map(size => (
+                {product.sizes?.map(size => (
                   <button key={size} onClick={() => { setSelectedSize(size); setSizeError(false); }}
                     className={`min-w-[50px] px-3 py-2 rounded-lg border text-sm transition-all duration-200 font-medium ${selectedSize === size ? 'border-white bg-white/10 text-white' : 'border-white/15 text-brand-muted hover:border-white/35 hover:text-brand-cream'}`}>
                     {size}
@@ -135,7 +171,7 @@ export default function ProductDetail() {
               <p className="text-brand-muted text-sm leading-relaxed">{product.description}</p>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              {product.tags.map(tag => (
+              {product.tags?.map(tag => (
                 <span key={tag} className="bg-white/5 text-brand-muted text-[11px] px-2.5 py-1 rounded capitalize">{tag}</span>
               ))}
             </div>
@@ -146,7 +182,7 @@ export default function ProductDetail() {
           <div className="mt-16 pt-12 border-t border-white/8">
             <h2 className="text-brand-cream font-bold text-2xl mb-8">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-              {related.map(p => <ProductCard key={p.id} product={p} />)}
+              {related.map(p => <ProductCard key={p._id} product={p} />)}
             </div>
           </div>
         )}

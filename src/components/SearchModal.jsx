@@ -1,23 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
+import { fetchProducts } from '../lib/api';
 
 export default function SearchModal() {
   const { searchOpen, setSearchOpen } = useCart();
   const [query, setQuery] = useState('');
+  const [allProducts, setAllProducts] = useState([]);
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  const results = query.trim().length > 1
-    ? products.filter(p =>
-        p.name.toLowerCase().includes(query.toLowerCase()) ||
-        p.tags.some(t => t.toLowerCase().includes(query.toLowerCase())) ||
-        p.category.some(c => c.toLowerCase().includes(query.toLowerCase()))
-      ).slice(0, 6)
-    : [];
-
+  // Load products once when modal first opens
   useEffect(() => {
+    if (searchOpen && allProducts.length === 0) {
+      fetchProducts().then(data => { if (data.success) setAllProducts(data.products); }).catch(() => {});
+    }
     if (searchOpen) { setTimeout(() => inputRef.current?.focus(), 100); }
     else { setQuery(''); }
   }, [searchOpen]);
@@ -28,7 +25,15 @@ export default function SearchModal() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [setSearchOpen]);
 
-  const handleSelect = (product) => { setSearchOpen(false); navigate(`/products/${product.id}`); };
+  const results = query.trim().length > 1
+    ? allProducts.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
+        p.tags?.some(t => t.toLowerCase().includes(query.toLowerCase())) ||
+        p.category?.some(c => c.toLowerCase().includes(query.toLowerCase()))
+      ).slice(0, 6)
+    : [];
+
+  const handleSelect = (product) => { setSearchOpen(false); navigate(`/products/${product._id}`); };
 
   return (
     <>
@@ -50,12 +55,12 @@ export default function SearchModal() {
             {results.length > 0 && (
               <div className="py-2 max-h-80 overflow-y-auto">
                 {results.map(product => (
-                  <button key={product.id} onClick={() => handleSelect(product)}
+                  <button key={product._id} onClick={() => handleSelect(product)}
                     className="w-full flex items-center gap-4 px-5 py-3 hover:bg-white/5 transition-colors text-left">
                     <img src={product.image} alt={product.name} className="w-12 h-14 object-cover rounded-lg flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-brand-cream text-sm font-medium truncate">{product.name}</p>
-                      <p className="text-brand-muted text-xs mt-0.5 capitalize">{product.category.join(', ')}</p>
+                      <p className="text-brand-muted text-xs mt-0.5 capitalize">{product.category?.join(', ')}</p>
                     </div>
                     <span className="text-brand-cream font-bold text-sm flex-shrink-0">${product.price.toFixed(2)}</span>
                   </button>

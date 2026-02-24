@@ -5,6 +5,7 @@ import {
   signInWithPopup, updateProfile,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import { trackActivity } from '../lib/api';
 
 const AuthContext = createContext(null);
 
@@ -16,6 +17,8 @@ export function AuthProvider({ children }) {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
+      // Track activity whenever a user is signed in
+      if (u) trackActivity(u);
     });
     return unsub;
   }, []);

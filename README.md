@@ -1,52 +1,37 @@
-# SHiNi — Premium Clothing Brand Website
+# VIBEWEAR — Setup Guide
 
-A full-featured, responsive clothing brand website built with React + Vite + Tailwind CSS.
-
-## 🎨 Color Themes
-This package comes in 3 color variants:
-- **shini-theme1** — Navy & Coral: `#172A39`, `#E9E4E0`, `#FC563C`, `#6E7575`
-- **shini-theme2** — Dark & Burnt Orange: `#1B191A`, `#E9E4E0`, `#943A1F`
-- **shini-theme3** — Dark & Rose Red: `#222223`, `#FEFEFE`, `#B62A2D`, `#E6A8A8`
-
-## 🚀 Getting Started
+## First-Time Setup (run once)
 
 ```bash
-npm install
+# 1. Install all dependencies (both client and server)
+npm run setup
+
+# 2. Seed the database with products
+npm run seed
+```
+
+## Running the App
+
+```bash
+# Starts both the Vite frontend (port 5173) and Express server (port 4000)
 npm run dev
 ```
 
-Then open `http://localhost:5173` in your browser.
+Then open: **http://localhost:5173**
 
-## 📁 Pages
-- **Home** (`/`) — Hero slider, sales, categories, new arrivals, accessories, brand section, store info
-- **Products** (`/products`) — All products with search, filter by category, sort
-- **Product Detail** (`/products/:id`) — Full product info, size/color selector, add to cart
-- **Cart** (`/cart`) — Cart items, order summary, WhatsApp checkout
-- **About** (`/about`) — Brand story, team, values
-- **Contact** (`/contact`) — Contact form + info
-- **Find Store** (`/find-store`) — Store locations
+Admin panel: **http://localhost:5173/admin-login**
+- Username: `vibewear`
+- Password: `Admin@123!`
 
-## 🛒 Cart & Checkout
-- Add to cart with confirmation dialog
-- Cart drawer accessible from navbar
-- Full cart page with quantity controls
-- Checkout via WhatsApp with auto-formatted order message
+---
 
-## ⚙️ Configuration
-### WhatsApp Number
-Edit `src/pages/Cart.jsx` line 5:
-```js
-const WHATSAPP_NUMBER = '2348012345678'; // Replace with your WhatsApp number
-```
+## What Was Fixed
 
-### Products
-Edit `src/data/products.js` to add, remove, or modify products.
-
-### Store Locations
-Edit `storeLocations` in `src/data/products.js`.
-
-## 🔧 Tech Stack
-- React 18 + React Router v6
-- Tailwind CSS v3
-- Vite (build tool)
-- Google Fonts: Playfair Display + DM Sans + Space Mono
+1. **`server/.env`** — Filled in real MongoDB URI and admin credentials
+2. **`Products.jsx`** — Now fetches live products from the API instead of static hardcoded data
+3. **`Home.jsx`** — Now fetches live products from the API with loading skeletons
+4. **`ProductDetail.jsx`** — Now fetches from API using MongoDB `_id`; shows loading state
+5. **`ProductCard.jsx`** — Fixed navigation to use `_id` (MongoDB) instead of `id` (static)
+6. **`CartContext.jsx`** — Fixed cart keying to use `_id` so add-to-cart works for DB products
+7. **`SearchModal.jsx`** — Now searches live products from the API
+8. **`package.json`** — Fixed `dev` script so server runs from its own directory and finds its dependencies; added `setup` and `seed` scripts
