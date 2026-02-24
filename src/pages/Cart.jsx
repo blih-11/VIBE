@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
-const WHATSAPP_NUMBER = '2348012345678';
+const WHATSAPP_NUMBER = '2349063636079';
 
 export default function Cart() {
   const navigate = useNavigate();
