@@ -23,7 +23,7 @@ export default function Cart() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8 mt-5">
           {/* <span className="text-white text-xs font-semibold uppercase tracking-widest">Review</span> */}
-          <h1 className="text-brand-cream text-3xl md:text-4xl font-bold mt-1">Your Cart:</h1>
+          <h1 className="text-brand-cream text-3xl md:text-4xl font-bold mt-1">Your Cart</h1>
         </div>
 
         {cartItems.length === 0 ? (
