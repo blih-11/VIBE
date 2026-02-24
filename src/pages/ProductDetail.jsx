@@ -35,10 +35,10 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="bg-brand-bg min-h-screen">
+    <div className="bg-brand-bg min-h-screen   ">
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
-        <nav className="flex items-center gap-2 text-brand-muted text-xs">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6  pt-6">
+        <nav className="flex mt-12 items-center gap-2 text-brand-muted text-xs">
           <button onClick={() => navigate('/')} className="hover:text-brand-cream transition-colors">Home</button>
           <span>/</span>
           <button onClick={() => navigate('/products')} className="hover:text-brand-cream transition-colors">Products</button>

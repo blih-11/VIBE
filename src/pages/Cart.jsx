@@ -6,7 +6,7 @@ const WHATSAPP_NUMBER = '2348012345678';
 export default function Cart() {
   const navigate = useNavigate();
   const { cartItems, cartTotal, removeFromCart, updateQuantity, clearCart } = useCart();
-  const shipping = cartTotal >= 50000 ? 0 : 2000;
+  const shipping = cartTotal >= 200 ? 0 : 10;
   const grandTotal = cartTotal + shipping;
 
   const handleCheckout = () => {
@@ -21,9 +21,9 @@ export default function Cart() {
   return (
     <div className="bg-brand-bg min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="mb-8">
-          <span className="text-white text-xs font-semibold uppercase tracking-widest">Review</span>
-          <h1 className="text-brand-cream text-3xl md:text-4xl font-bold mt-1">Your Cart</h1>
+        <div className="mb-8 mt-5">
+          {/* <span className="text-white text-xs font-semibold uppercase tracking-widest">Review</span> */}
+          <h1 className="text-brand-cream text-3xl md:text-4xl font-bold mt-1">Your Cart:</h1>
         </div>
 
         {cartItems.length === 0 ? (
@@ -86,7 +86,7 @@ export default function Cart() {
                   <div className="flex justify-between">
                     <span className="text-brand-muted text-sm">Shipping</span>
                     <span className={`text-sm font-medium ${shipping === 0 ? 'text-green-400' : 'text-brand-cream'}`}>
-                      {shipping === 0 ? 'FREE' : `$${(shipping / 100).toFixed(2)}`}
+                      {shipping === 0 ? 'FREE' : `$${(shipping ).toFixed(2)}`}
                     </span>
                   </div>
                 </div>
