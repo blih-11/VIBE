@@ -41,13 +41,11 @@ export default function About() {
               <p>From our first drop of five tees to Season 4, VIBE WEAR has grown into a community of people who move with intention and dress the same way.</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl overflow-hidden aspect-[3/4]">
-              <img src="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=500" alt="" className="w-full h-full object-cover" />
+          <div className="   gap-3">
+            <div className="rounded-xl overflow-hidden   ">
+              <img src="/images/VIBE.png" alt="" className="w-full h-full object-cover" />
             </div>
-            <div className="rounded-xl overflow-hidden aspect-[3/4] mt-8">
-              <img src="https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=500" alt="" className="w-full h-full object-cover" />
-            </div>
+             
           </div>
         </div>
 
