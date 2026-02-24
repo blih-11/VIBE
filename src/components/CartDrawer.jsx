@@ -31,7 +31,7 @@ export default function CartDrawer() {
                 <p className="text-brand-cream font-semibold">Your cart is empty</p>
                 <p className="text-brand-muted text-sm mt-1">Add some items to get started</p>
               </div>
-              <button onClick={() => { setCartOpen(false); navigate('/products'); }} className="bg-brand-accent text-white font-medium px-6 py-2.5 rounded-lg text-sm hover:opacity-90 transition-opacity">
+              <button onClick={() => { setCartOpen(false); navigate('/products'); }} className="bg-black text-white border border-white/20 font-medium px-6 py-2.5 rounded-lg text-sm hover:bg-white hover:text-black transition-all">
                 Browse Products
               </button>
             </div>
@@ -63,7 +63,7 @@ export default function CartDrawer() {
               <span className="text-brand-muted text-sm">Subtotal</span>
               <span className="text-brand-cream font-bold text-xl">${cartTotal.toFixed(2)}</span>
             </div>
-            <button onClick={() => { setCartOpen(false); navigate('/cart'); }} className="w-full bg-brand-accent text-white font-semibold py-3.5 rounded-xl hover:opacity-90 transition-opacity">
+            <button onClick={() => { setCartOpen(false); navigate('/cart'); }} className="w-full bg-black text-white border border-white/20 font-semibold py-3.5 rounded-xl hover:bg-white hover:text-black transition-all">
               View Cart & Checkout
             </button>
           </div>

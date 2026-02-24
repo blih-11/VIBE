@@ -6,11 +6,9 @@ export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const { requestAddToCart } = useCart();
 
-  // ✅ Make values safe numbers
   const price = Number(product?.price) || 0;
   const originalPrice = Number(product?.originalPrice) || null;
 
-  // ✅ Safe discount calculation
   const discount =
     originalPrice && price
       ? Math.round((1 - price / originalPrice) * 100)
@@ -18,10 +16,9 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-
-    if (!product?.sizes?.length || !product?.colors?.length) return;
-
-    requestAddToCart(product, product.sizes[0], product.colors[0]);
+    const size = product?.sizes?.[0] ?? 'One Size';
+    const color = product?.colors?.[0] ?? 'Default';
+    requestAddToCart(product, size, color);
   };
 
   return (
@@ -39,19 +36,17 @@ export default function ProductCard({ product }) {
         />
 
         {/* Badges */}
-        <div className="absolute   top-3 left-3 flex flex-col gap-1.5">
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           {product?.isNew && (
-            <span className="bg-black  text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
+            <span className="bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
               New
             </span>
           )}
-
           {discount && (
             <span className="bg-black/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
               -{discount}%
             </span>
           )}
-
           {!product?.inStock && (
             <span className="bg-black/70 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
               Sold Out
@@ -65,14 +60,13 @@ export default function ProductCard({ product }) {
         <StarRating rating={product?.rating || 0} reviews={product?.reviews || 0} />
 
         <h3 className="text-brand-cream text-sm font-medium mt-2 mb-1 leading-snug line-clamp-2">
-          {product?.name || "Unnamed Product"}
+          {product?.name || 'Unnamed Product'}
         </h3>
 
         <div className="flex items-center gap-2 mb-1">
           <span className="text-brand-cream font-bold text-base">
             ${price.toFixed(2)}
           </span>
-
           {originalPrice && (
             <span className="text-brand-muted text-sm line-through">
               ${originalPrice.toFixed(2)}

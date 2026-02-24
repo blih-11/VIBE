@@ -120,7 +120,7 @@ export default function ProductDetail() {
             {/* Actions */}
             <div className="flex gap-3 mb-7">
               <button onClick={handleAddToCart} disabled={!product.inStock}
-                className="flex-1 bg-white text-black font-semibold py-3.5 px-6 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed text-sm">
+                className="flex-1 bg-black text-white font-semibold py-3.5 px-6 rounded-xl border border-white/20 hover:bg-white hover:text-black transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm">
                 {product.inStock ? 'Add to Cart' : 'Out of Stock'}
               </button>
               <button onClick={() => setCartOpen(true)} className="px-6 py-3.5 border border-white/15 text-brand-cream rounded-xl hover:border-white/50 hover:text-white transition-all text-sm font-medium">

@@ -18,7 +18,7 @@ export default function ConfirmModal() {
         <p className="text-brand-muted text-sm mb-5">Add this item to your cart?</p>
         <div className="flex gap-3">
           <button onClick={cancelAdd} className="flex-1 border border-white/15 text-brand-cream font-medium py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">Cancel</button>
-          <button onClick={confirmAdd} className="flex-1 bg-brand-accent text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity text-sm">Add to Cart</button>
+          <button onClick={confirmAdd} className="flex-1 bg-black text-white font-semibold py-3 rounded-xl hover:bg-white hover:text-black border border-white/20 transition-all text-sm">Add to Cart</button>
         </div>
       </div>
     </div>

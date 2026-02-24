@@ -35,7 +35,7 @@ export default function Cart() {
               <h3 className="text-brand-cream font-bold text-xl mb-1">Your cart is empty</h3>
               <p className="text-brand-muted text-sm">Start exploring our collection</p>
             </div>
-            <button onClick={() => navigate('/products')} className="bg-white text-black font-semibold px-8 py-3 rounded-xl hover:opacity-90 transition-opacity">
+            <button onClick={() => navigate('/products')} className="bg-black text-white border border-white/20 font-semibold px-8 py-3 rounded-xl hover:bg-white hover:text-black transition-all">
               Browse Products
             </button>
           </div>
