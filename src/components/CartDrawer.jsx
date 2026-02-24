@@ -1,8 +1,10 @@
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartDrawer() {
   const { cartOpen, setCartOpen, cartItems, cartTotal, removeFromCart, updateQuantity } = useCart();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   return (
@@ -41,7 +43,7 @@ export default function CartDrawer() {
                 <div className="flex-1 min-w-0">
                   <h4 className="text-brand-cream text-sm font-medium leading-snug truncate">{item.name}</h4>
                   <p className="text-brand-muted text-xs mt-0.5">{item.size} · {item.color}</p>
-                  <p className="text-brand-cream font-bold mt-1">${item.price.toFixed(2)}</p>
+                  <p className="text-brand-cream font-bold mt-1">{formatPrice(item.price)}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <button onClick={() => updateQuantity(item.key, item.quantity - 1)} className="w-7 h-7 rounded-full border border-white/15 flex items-center justify-center text-brand-cream hover:border-brand-accent text-sm">−</button>
                     <span className="text-brand-cream text-sm w-5 text-center font-medium">{item.quantity}</span>
@@ -60,7 +62,7 @@ export default function CartDrawer() {
           <div className="p-5 border-t  border-white/8 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-brand-muted text-sm">Subtotal</span>
-              <span className="text-brand-cream font-bold text-xl">${cartTotal.toFixed(2)}</span>
+              <span className="text-brand-cream font-bold text-xl">{formatPrice(cartTotal)}</span>
             </div>
             <button onClick={() => { setCartOpen(false); navigate('/cart'); }} className="w-full bg-black text-white border border-white/20 font-semibold py-3.5 rounded-xl hover:bg-white hover:text-black transition-all">
               View Cart & Checkout

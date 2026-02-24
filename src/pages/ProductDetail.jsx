@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import { products } from '../data/products';
 import StarRating from '../components/StarRating';
 import ProductCard from '../components/ProductCard';
@@ -9,6 +10,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { requestAddToCart, setCartOpen } = useCart();
+  const { formatPrice, convert } = useCurrency();
   const product = products.find(p => p.id === parseInt(id));
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -77,9 +79,9 @@ export default function ProductDetail() {
             <div className="mb-4"><StarRating rating={product.rating} reviews={product.reviews} size="md" /></div>
 
             <div className="flex items-baseline gap-3 mb-2">
-              <span className="text-brand-cream font-black text-3xl">${product.price.toFixed(2)}</span>
+              <span className="text-brand-cream font-black text-3xl">{formatPrice(product.price)}</span>
               {product.originalPrice && <span className="text-brand-muted text-lg line-through">${product.originalPrice.toFixed(2)}</span>}
-              {discount && <span className="text-white text-sm font-bold">Save ${(product.originalPrice - product.price).toFixed(2)}</span>}
+              {discount && <span className="text-white text-sm font-bold">Save {formatPrice(product.originalPrice - product.price)}</span>}
             </div>
             <div className={`text-xs font-semibold uppercase tracking-wider mb-5 ${product.inStock ? 'text-green-400' : 'text-red-400'}`}>
               {product.inStock ? '● In Stock — Ready to Ship' : '● Out of Stock'}

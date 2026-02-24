@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useCurrency, CURRENCIES } from '../context/CurrencyContext';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const { cartCount, setSearchOpen } = useCart();
+  const { currency, setCurrency, currentCurrency } = useCurrency();
   const location = useLocation();
 
   useEffect(() => {
@@ -56,7 +59,85 @@ export default function Navbar() {
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {/* Currency Selector */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setCurrencyOpen(o => !o)}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: '#ccc',
+                padding: '4px 10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.65rem',
+                letterSpacing: '0.08em',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+            >
+              <span style={{ fontSize: '0.85rem' }}>{currentCurrency.flag}</span>
+              <span>{currency}</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                style={{ transform: currencyOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+
+            {/* Dropdown */}
+            {currencyOpen && (
+              <>
+                <div
+                  style={{ position: 'fixed', inset: 0, zIndex: 149 }}
+                  onClick={() => setCurrencyOpen(false)}
+                />
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                  background: '#0e0e0e', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px', padding: '6px', minWidth: '200px',
+                  zIndex: 150, boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
+                  maxHeight: '360px', overflowY: 'auto',
+                }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#555', letterSpacing: '0.15em', padding: '6px 10px 8px', textTransform: 'uppercase' }}>
+                    Select Currency
+                  </div>
+                  {CURRENCIES.map(cur => (
+                    <button
+                      key={cur.code}
+                      onClick={() => { setCurrency(cur.code); setCurrencyOpen(false); }}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                        padding: '9px 10px', borderRadius: '8px', border: 'none',
+                        background: currency === cur.code ? 'rgba(255,255,255,0.08)' : 'transparent',
+                        cursor: 'pointer', transition: 'background 0.15s',
+                        color: currency === cur.code ? '#fff' : '#888',
+                      }}
+                      onMouseEnter={e => { if (currency !== cur.code) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                      onMouseLeave={e => { if (currency !== cur.code) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>{cur.flag}</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', letterSpacing: '0.06em', flex: 1, textAlign: 'left' }}>
+                        {cur.code}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#555' }}>
+                        {cur.symbol} · {cur.name}
+                      </span>
+                      {currency === cur.code && (
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="m5 12 5 5 9-9"/></svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
           <button onClick={() => setSearchOpen && setSearchOpen(true)}
+            className="search-btn-desktop"
             style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', padding: '4px', display: 'flex', alignItems: 'center' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </button>
@@ -107,12 +188,29 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-        <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #111' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#444', letterSpacing: '0.2em', marginBottom: '0.5rem' }}>FOLLOW US</div>
-          <a href="https://instagram.com/vibewear_" target="_blank" rel="noreferrer"
-            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#888', letterSpacing: '0.15em', textDecoration: 'none' }}>
-            @vibewear_ ↗
-          </a>
+        <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #111', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          {/* Search in mobile menu */}
+          <button
+            onClick={() => { setSearchOpen && setSearchOpen(true); setMenuOpen(false); }}
+            style={{
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '10px', cursor: 'pointer', color: '#888',
+              padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px',
+              fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: '0.12em',
+              textTransform: 'uppercase', width: '100%',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search Products
+          </button>
+
+          <div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#444', letterSpacing: '0.2em', marginBottom: '0.5rem' }}>FOLLOW US</div>
+            <a href="https://instagram.com/vibewear_" target="_blank" rel="noreferrer"
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#888', letterSpacing: '0.15em', textDecoration: 'none' }}>
+              @vibewear_ ↗
+            </a>
+          </div>
         </div>
       </div>
 
@@ -195,8 +293,8 @@ export default function Navbar() {
 
       <style>{`
         @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        @media(min-width:768px){ .hamburger-btn{display:none!important} .bottom-nav{display:none!important} .desktop-nav{display:flex!important} }
-        @media(max-width:767px){ .desktop-nav{display:none!important} }
+        @media(min-width:768px){ .hamburger-btn{display:none!important} .bottom-nav{display:none!important} .desktop-nav{display:flex!important} .search-btn-desktop{display:flex!important} }
+        @media(max-width:767px){ .desktop-nav{display:none!important} .search-btn-desktop{display:none!important} }
       `}</style>
     </>
   );

@@ -1,21 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-
-const WHATSAPP_NUMBER = '2349063636079';
+import { useCurrency } from '../context/CurrencyContext';
 
 export default function Cart() {
   const navigate = useNavigate();
   const { cartItems, cartTotal, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { formatPrice } = useCurrency();
   const shipping = cartTotal >= 200 ? 0 : 10;
   const grandTotal = cartTotal + shipping;
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
-    const itemsText = cartItems.map(item => `• ${item.name} (${item.size}, ${item.color}) x${item.quantity} — $${(item.price * item.quantity).toFixed(2)}`).join('\n');
-    const message = encodeURIComponent(
-      `🛍️ *New VIBE WEAR Order*\n\n${itemsText}\n\n*Subtotal:* $${cartTotal.toFixed(2)}\n*Shipping:* ${shipping === 0 ? 'FREE' : '$' + (shipping / 100).toFixed(2)}\n*Total:* $${grandTotal.toFixed(2)}\n\nPlease confirm my order and provide delivery & payment details. Thank you!`
-    );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+    navigate('/checkout');
   };
 
   return (
@@ -52,7 +48,7 @@ export default function Cart() {
                       {item.name}
                     </h4>
                     <p className="text-brand-muted text-xs mt-0.5">{item.size} · {item.color}</p>
-                    <p className="text-brand-cream font-bold mt-1">${item.price.toFixed(2)}</p>
+                    <p className="text-brand-cream font-bold mt-1">{formatPrice(item.price)}</p>
                     <div className="flex items-center gap-2 mt-3">
                       <button onClick={() => updateQuantity(item.key, item.quantity - 1)} className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-brand-cream hover:border-white/50 text-sm">−</button>
                       <span className="text-brand-cream text-sm w-5 text-center font-medium">{item.quantity}</span>
@@ -63,8 +59,8 @@ export default function Cart() {
                     </div>
                   </div>
                   <div className="hidden sm:block text-right flex-shrink-0">
-                    <p className="text-brand-cream font-bold">${(item.price * item.quantity).toFixed(2)}</p>
-                    {item.quantity > 1 && <p className="text-brand-muted text-xs">${item.price.toFixed(2)} each</p>}
+                    <p className="text-brand-cream font-bold">{formatPrice(item.price * item.quantity)}</p>
+                    {item.quantity > 1 && <p className="text-brand-muted text-xs">{formatPrice(item.price)} each</p>}
                   </div>
                 </div>
               ))}
@@ -81,26 +77,26 @@ export default function Cart() {
                 <div className="space-y-3 mb-5">
                   <div className="flex justify-between">
                     <span className="text-brand-muted text-sm">Subtotal ({cartItems.reduce((s, i) => s + i.quantity, 0)} items)</span>
-                    <span className="text-brand-cream font-medium text-sm">${cartTotal.toFixed(2)}</span>
+                    <span className="text-brand-cream font-medium text-sm">{formatPrice(cartTotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-brand-muted text-sm">Shipping</span>
                     <span className={`text-sm font-medium ${shipping === 0 ? 'text-green-400' : 'text-brand-cream'}`}>
-                      {shipping === 0 ? 'FREE' : `$${(shipping ).toFixed(2)}`}
+                      {shipping === 0 ? 'FREE' : formatPrice(shipping)}
                     </span>
                   </div>
                 </div>
                 <div className="border-t border-white/8 pt-4 mb-5">
                   <div className="flex justify-between items-center">
                     <span className="text-brand-cream font-semibold">Total</span>
-                    <span className="text-brand-cream font-black text-2xl">${grandTotal.toFixed(2)}</span>
+                    <span className="text-brand-cream font-black text-2xl">{formatPrice(grandTotal)}</span>
                   </div>
                 </div>
-                <button onClick={handleCheckout} className="w-full bg-[#25D366] text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-3 hover:opacity-90 transition-opacity mb-3">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                  Checkout via WhatsApp
+                <button onClick={handleCheckout} className="w-full bg-white text-black font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-brand-cream transition-colors mb-3">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  Proceed to Checkout
                 </button>
-                <p className="text-brand-muted text-xs text-center mb-4">You'll be redirected to WhatsApp to confirm your order.</p>
+                <p className="text-brand-muted text-xs text-center mb-4">Pay securely with card or bank transfer via Flutterwave.</p>
                 <button onClick={() => navigate('/products')} className="w-full border border-white/12 text-brand-muted text-sm py-3 rounded-xl hover:border-white/30 hover:text-brand-cream transition-all">
                   Continue Shopping
                 </button>

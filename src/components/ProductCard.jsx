@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import StarRating from './StarRating';
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const { requestAddToCart } = useCart();
+  const { formatPrice } = useCurrency();
 
   const price = Number(product?.price) || 0;
   const originalPrice = Number(product?.originalPrice) || null;
@@ -65,11 +67,11 @@ export default function ProductCard({ product }) {
 
         <div className="flex items-center gap-2 mb-1">
           <span className="text-brand-cream font-bold text-base">
-            ${price.toFixed(2)}
+            {formatPrice(price)}
           </span>
           {originalPrice && (
             <span className="text-brand-muted text-sm line-through">
-              ${originalPrice.toFixed(2)}
+              {formatPrice(originalPrice)}
             </span>
           )}
         </div>
