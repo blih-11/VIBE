@@ -9,8 +9,7 @@ export default function CartDrawer() {
     <>
       <div className={`fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 ${cartOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setCartOpen(false)} />
 
-      <div className={`fixed top-0 right-0 h-full w-full max-w-md bg-brand-bg z-[70] shadow-2xl transition-transform duration-300 flex flex-col ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        {/* Header */}
+<div className={`fixed top-0 right-0 h-full w-full max-w-md bg-brand-bg z-[70] shadow-2xl transition-transform duration-300 flex flex-col pb-[70px] ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>        {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-white/8">
           <h2 className="text-lg font-bold text-brand-cream">
             Your Cart {cartItems.length > 0 && <span className="text-brand-muted font-normal text-sm">({cartItems.length})</span>}
@@ -58,7 +57,7 @@ export default function CartDrawer() {
         </div>
 
         {cartItems.length > 0 && (
-          <div className="p-5 border-t border-white/8 space-y-3">
+          <div className="p-5 border-t  border-white/8 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-brand-muted text-sm">Subtotal</span>
               <span className="text-brand-cream font-bold text-xl">${cartTotal.toFixed(2)}</span>
